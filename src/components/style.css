@@ -94,3 +94,49 @@ button.btn{
 button.btn:hover{
     background-color: #02500b;
 }
+
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .test {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    span {
+        font-size: 1.2rem;
+    }
+
+    button.btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .result p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container{
+        padding: 20px;
+        height: 100%;
+    }
+    .test {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    span {
+        font-size: 1rem;
+    }
+
+    button.btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    .result p {
+        font-size: 0.8rem;
+    }
+}
