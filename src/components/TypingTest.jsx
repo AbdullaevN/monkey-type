@@ -1,148 +1,5 @@
-// import React, { useEffect, useRef, useState } from 'react'
-// import './style.css'
-
-// const paragraph = `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quas magnam, odit velit quos temporibus error nostrum vel ab? Officiis facere vel error incidunt? Laudantium mollitia dignissimos maiores delectus fuga quis?`
-
-// const TypingTest = () => {
-
-//   const maxTime = 60;
-//   const [timeLeft, setTimeLeft] = useState(maxTime)
-//   const [mistakes, setMistakes] = useState(0)
-//   const [charIndex, setCharIndex] = useState(0)
-//   const [isTyping, setIsTyping] = useState(false)
-//   const [WPM, setWPM] = useState(0)
-//   const [CPM, setCPM] = useState(0)
-//   const inputRef = useRef(null)
-//   const charRefs = useRef([])
-//   const [correctWrong, setCorrectWrong] = useState([])
-
-
-
-//   useEffect(() => {
-//     inputRef.current.focus()
-//     setCorrectWrong(Array(charRefs.current.length).fill(""))
-//   }, [])
-
-//   useEffect(() => {
-//     let interval;
-//     if(isTyping && timeLeft > 0) {
-//       interval = setInterval(() => {
-//         setTimeLeft(timeLeft - 1)
-//         let correctChars = charIndex - mistakes
-//         let totalTime = maxTime - timeLeft
-
-//         let cpm = correctChars * (60 / totalTime)
-//         cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm
-//         setCPM(parseInt(cpm, 10))
-
-//         let wpm = Math.round((correctChars / 5 / totalTime) * 60)
-//         wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm
-//         setWPM(wpm)
-//       }, 1000)
-//     }else if(timeLeft === 0) {
-//       clearInterval(interval)
-//       setIsTyping(false)
-//     }
-//     return () => {
-//       clearInterval(interval)
-//     }
-//   },[isTyping, timeLeft])
-
-
-//   const handleReset = (e) => {
-//     setTimeLeft(maxTime)
-//     setCharIndex(0)
-//     setIsTyping(false)
-//     setMistakes(0)
-//     setWPM(0)
-//     setCPM(0)
-//     setCorrectWrong(Array(charRefs.current.length).fill(''))
-//     inputRef.current.focus()
-//   }
-
-//   const handleChange = (e) =>{
-//     const characters = charRefs.current
-//     let currentChar = characters[charIndex]
-//     let typedChar = e.target.value.slice(-1)
-
-//     if (e.nativeEvent.inputType === 'deleteContentBackward') {
-//       if (charIndex > 0) {
-//         setCharIndex(charIndex - 1);
-//         setMistakes(correctWrong[charIndex - 1] === 'wrong' || correctWrong[charIndex - 1] === 'no-space' ? mistakes - 1 : mistakes);
-//         correctWrong[charIndex - 1] = "";
-//       }
-//       return;
-//     }
-  
-
-
-//     if(charIndex < characters.length && timeLeft > 0){
-//       if(!isTyping) {
-//         setIsTyping(true)
-//       }
-
-//       if(typedChar === currentChar.textContent) {
-//         // setCharIndex(charIndex + 1)
-//         correctWrong[charIndex] = "correct"
-
-//       }else if(currentChar.textContent === " " && typedChar !== " ") {
-//         correctWrong[charIndex] = "no-space"
-//         setMistakes(mistakes + 1)
-//       }
-//       else{
-//         correctWrong[charIndex] = "wrong"
-//         setMistakes(mistakes + 1)  
-//       }
-//       setCharIndex(charIndex + 1)
-
-//       if(charIndex === characters.length - 1){
-//         setIsTyping(false)
-//       }
-//     }else{
-//       setIsTyping(false)
-//    }
-// }
-// const handleContainerClick = () => {
-//   inputRef.current.focus();
-// };
-
-//   return (
-//     <div className='container'>
-//       <div className='test' onClick={handleContainerClick}>
-//         <input type="text" className='input-field' ref={inputRef} onChange={handleChange} />
-//           {
-//             paragraph.split("").map((char, index) => (
-//               <span 
-//               className={` char ${index === charIndex ? " active" : ""} ${correctWrong[index]} `} 
-//               ref={(e) => charRefs.current[index] = e} 
-//               key={index}>
-//                 {char}
-//               </span>
-//             ))
-//           }
-//       </div>
-//       <div className='result'>
-//         <p>Time Left: <strong>{timeLeft}</strong> </p>
-//         <p>Mistakes: <strong>{mistakes}</strong> </p>
-//         <p>WRM: <strong>{WPM}</strong> </p>
-//         <p>CPM: <strong>{CPM}</strong> </p>
-//         <button className='btn' onClick={handleReset}>Reset</button>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default TypingTest
-
-
-
-
-
-
-
-
-// 2
-import React, { useEffect, useRef } from 'react';
+ 
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
   setTimeLeft, 
@@ -155,7 +12,7 @@ import {
   resetState 
 } from '../features/typingSlice.js';
 import Character from './Character';
-import './style.css';
+import ResetButton from './ResetButton.jsx';
 
 const paragraph = `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quas magnam, odit velit quos temporibus error nostrum vel ab? Officiis facere vel error incidunt? Laudantium mollitia dignissimos maiores delectus fuga quis?`;
 
@@ -164,6 +21,8 @@ const TypingTest = () => {
   const { timeLeft, mistakes, charIndex, isTyping, WPM, CPM, correctWrong } = useSelector((state) => state.typing);
   const inputRef = useRef(null);
   const charRefs = useRef([]);
+  const [testFinished, setTestFinished] = useState(false);
+  const [testDuration, setTestDuration] = useState(20); // Default to 20 seconds
 
   useEffect(() => {
     if (inputRef.current) {
@@ -177,28 +36,22 @@ const TypingTest = () => {
     if (isTyping && timeLeft > 0) {
       interval = setInterval(() => {
         dispatch(setTimeLeft(timeLeft - 1));
-        let correctChars = charIndex - mistakes;
-        let totalTime = 60 - timeLeft;
-
-        let cpm = correctChars * (60 / totalTime);
-        cpm = cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm;
-        dispatch(setCPM(parseInt(cpm, 10)));
-
-        let wpm = Math.round((correctChars / 5 / totalTime) * 60);
-        wpm = wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm;
-        dispatch(setWPM(wpm));
       }, 1000);
     } else if (timeLeft === 0) {
       clearInterval(interval);
       dispatch(setIsTyping(false));
+      setTestFinished(true);
     }
     return () => {
       clearInterval(interval);
     };
-  }, [isTyping, timeLeft, charIndex, mistakes, dispatch]);
+  }, [isTyping, timeLeft, dispatch]);
 
-  const handleReset = () => {
+  const handleDurationClick = (duration) => {
+    setTestDuration(duration);
     dispatch(resetState());
+    setTestFinished(false);
+    dispatch(setTimeLeft(duration));
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -250,6 +103,7 @@ const TypingTest = () => {
   
       if (charIndex === characters.length - 1) {
         dispatch(setIsTyping(false));
+        setTestFinished(true);
       }
     } else {
       dispatch(setIsTyping(false));
@@ -262,9 +116,42 @@ const TypingTest = () => {
     }
   };
 
+  // Функция для подсчета статистики
+  const calculateStats = () => {
+    const correctChars = correctWrong.filter(status => status === 'correct').length;
+    const totalChars = paragraph.length;
+    const typedText = correctWrong.join('').trim(); // Получаем текст, который был введён
+    const words = paragraph.split(' ');
+    const typedWords = typedText.split(' ');
+
+    const correctWords = typedWords.filter((word, index) => word === words[index]).length;
+
+    const accuracy = (correctChars / totalChars) * 100;
+
+    const totalTime = testDuration - timeLeft;
+
+    const cpm = correctChars * (60 / totalTime);
+    const wpm = Math.round((correctChars / 5 / totalTime) * 60);
+
+    return {
+      cpm: cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm,
+      wpm: wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm,
+      correctChars,
+      correctWords,
+      accuracy: accuracy.toFixed(2) // округляем до двух знаков после запятой
+    };
+  };
+
+  const stats = testFinished ? calculateStats() : { cpm: CPM, wpm: WPM, correctChars: 0, correctWords: 0, accuracy: 0 };
+
   return (
-    <div className='container'>
-      <div className='test' onClick={handleContainerClick}>
+    <div className='container' onClick={handleContainerClick}>
+      <div className='controls'>
+        <button className='btn' onClick={() => handleDurationClick(20)}>20 </button>
+        <button className='btn' onClick={() => handleDurationClick(60)}>60 </button>
+        <button className='btn' onClick={() => handleDurationClick(120)}>120</button>
+      </div>
+      <div className='test'>
         <input type="text" className='input-field' ref={inputRef} onChange={handleChange} />
         {
           paragraph.split("").map((char, index) => (
@@ -281,76 +168,30 @@ const TypingTest = () => {
       <div className='result'>
         <p>Time Left: <strong>{timeLeft}</strong></p>
         <p>Mistakes: <strong>{mistakes}</strong></p>
-        <p>WPM: <strong>{WPM}</strong></p>
-        <p>CPM: <strong>{CPM}</strong></p>
-        <button className='btn' onClick={handleReset}>Reset</button>
+        <p>Correct Characters: <strong>{stats.correctChars}</strong></p>
+        <p>Correct Words: <strong>{stats.correctWords}</strong></p>
+        <p>Accuracy: <strong>{stats.accuracy}%</strong></p>
+        <p>WPM: <strong>{stats.wpm}</strong></p>
+        <p>CPM: <strong>{stats.cpm}</strong></p>
+      
       </div>
+
+      {testFinished && (
+          <div>
+            <p><strong>Test Finished!</strong></p>
+            <p>Errors: {mistakes}</p>
+            <p>Correct Characters: {stats.correctChars}</p>
+            <p>Correct Words: {stats.correctWords}</p>
+            <p>Accuracy: {stats.accuracy}%</p>
+            <p>Words Per Minute: {stats.wpm}</p>
+            <p>Characters Per Minute: {stats.cpm}</p>
+          </div>
+        )}
+      {/* <button className='btn' onClick={ResetButton}>Сбросить</button> */}
+      <ResetButton/>
+
     </div>
   );
 }
 
 export default TypingTest;
-
-
-
-
-
-
-// 3
-// import React, { useEffect, useRef } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { startTyping, stopTyping, incrementCharIndex, incrementMistakes, updateTimeLeft, updateWPM, updateCPM, resetGame } from '../features/typingSlice.js';
-// import './style.css';
-
-// const TypingTest = () => {
-//   const { timeLeft, mistakes, charIndex, isTyping, WPM, CPM } = useSelector((state) => state.typing);
-//   const dispatch = useDispatch();
-//   const inputRef = useRef(null);
-//   const charRefs = useRef([]);
-
-//   useEffect(() => {
-//     inputRef.current.focus();
-//     // Initialize correctWrong state
-//   }, []);
-
-//   useEffect(() => {
-//     let interval;
-//     if (isTyping && timeLeft > 0) {
-//       interval = setInterval(() => {
-//         dispatch(updateTimeLeft(timeLeft - 1));
-//         // Calculate WPM and CPM and dispatch updates
-//       }, 1000);
-//     } else if (timeLeft === 0) {
-//       clearInterval(interval);
-//       dispatch(stopTyping());
-//     }
-//     return () => clearInterval(interval);
-//   }, [isTyping, timeLeft, dispatch]);
-
-//   const handleChange = (e) => {
-//     // Handle input change logic and dispatch actions accordingly
-//   };
-
-//   const handleReset = () => {
-//     dispatch(resetGame());
-//     inputRef.current.focus();
-//   };
-
-//   return (
-//     <div className="container">
-//       <div className="test">
-//         <input type="text" className="input-field" ref={inputRef} onChange={handleChange} />
-//         {/* Render characters */}
-//       </div>
-//       <div className="result">
-//         <p>Time Left: <strong>{timeLeft}</strong> </p>
-//         <p>Mistakes: <strong>{mistakes}</strong> </p>
-//         <p>WRM: <strong>{WPM}</strong> </p>
-//         <p>CPM: <strong>{CPM}</strong> </p>
-//         <button className="btn" onClick={handleReset}>Reset</button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TypingTest;

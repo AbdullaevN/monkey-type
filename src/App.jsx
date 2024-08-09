@@ -1,7 +1,7 @@
 // App.js
 import React from 'react';
 import TypingTest from './components/TypingTest';
-import './components/style.css'
+import './index.css'
  
 
 const App = () => {

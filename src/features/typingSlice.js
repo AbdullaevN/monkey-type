@@ -1,65 +1,4 @@
-// // features/typingSlice.js
-// import { createSlice } from '@reduxjs/toolkit';
-
-// const typingSlice = createSlice({
-//   name: 'typing',
-//   initialState: {
-//     timeLeft: 60,
-//     mistakes: 0,
-//     charIndex: 0,
-//     isTyping: false,
-//     WPM: 0,
-//     CPM: 0,
-//   },
-//   reducers: {
-//     startTyping(state) {
-//       state.isTyping = true;
-//     },
-//     stopTyping(state) {
-//       state.isTyping = false;
-//     },
-//     incrementCharIndex(state) {
-//       state.charIndex += 1;
-//     },
-//     incrementMistakes(state) {
-//       state.mistakes += 1;
-//     },
-//     updateTimeLeft(state, action) {
-//       state.timeLeft = action.payload;
-//     },
-//     updateWPM(state, action) {
-//       state.WPM = action.payload;
-//     },
-//     updateCPM(state, action) {
-//       state.CPM = action.payload;
-//     },
-//     resetGame(state) {
-//       state.timeLeft = 60;
-//       state.mistakes = 0;
-//       state.charIndex = 0;
-//       state.isTyping = false;
-//       state.WPM = 0;
-//       state.CPM = 0;
-//     }
-//   }
-// });
-
-// export const { startTyping, stopTyping, incrementCharIndex, incrementMistakes, updateTimeLeft, updateWPM, updateCPM, resetGame } = typingSlice.actions;
-// export default typingSlice.reducer;
  
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -78,7 +17,7 @@ const fromLocalStorage = () => {
 }
 
 const initialState = fromLocalStorage() || { 
-  timeLeft: 60,
+  timeLeft: 20,
   mistakes: 0,
   charIndex: 0,
   isTyping: false,
