@@ -22,7 +22,7 @@ const TypingTest = () => {
   const inputRef = useRef(null);
   const charRefs = useRef([]);
   const [testFinished, setTestFinished] = useState(false);
-  const [testDuration, setTestDuration] = useState(20); // Default to 20 seconds
+  const [testDuration, setTestDuration] = useState(20);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -61,7 +61,7 @@ const TypingTest = () => {
     const characters = charRefs.current;
     let typedChar = e.target.value.slice(-1);
     let currentChar = characters[charIndex];
-  
+
     if (e.nativeEvent.inputType === 'deleteContentBackward') {
       if (charIndex > 0) {
         const newCharIndex = charIndex - 1;
@@ -81,14 +81,14 @@ const TypingTest = () => {
       }
       return;
     }
-  
+
     if (charIndex < characters.length && timeLeft > 0) {
       if (!isTyping) {
         dispatch(setIsTyping(true));
       }
-  
+
       const newCorrectWrong = [...correctWrong];
-  
+
       if (typedChar === currentChar.textContent) {
         newCorrectWrong[charIndex] = "correct";
       } else if (currentChar.textContent === " " && typedChar !== " ") {
@@ -100,7 +100,7 @@ const TypingTest = () => {
       }
       dispatch(setCharIndex(charIndex + 1));
       dispatch(setCorrectWrong(newCorrectWrong));
-  
+
       if (charIndex === characters.length - 1) {
         dispatch(setIsTyping(false));
         setTestFinished(true);
@@ -119,28 +119,21 @@ const TypingTest = () => {
   const calculateStats = () => {
     const correctChars = correctWrong.filter(status => status === 'correct').length;
     const totalChars = paragraph.length;
-    const typedText = correctWrong.join('').trim();
-    const words = paragraph.split(' ');
-    const typedWords = typedText.split(' ');
-
-    const correctWords = typedWords.filter((word, index) => word === words[index]).length;
-
     const accuracy = (correctChars / totalChars) * 100;
     const totalTime = testDuration - timeLeft;
-
-    const cpm = correctChars * (60 / totalTime);
-    const wpm = Math.round((correctChars / 5 / totalTime) * 60);
-
+  
+    const cpm = totalTime > 0 ? correctChars * (60 / totalTime) : 0;
+    const wpm = totalTime > 0 ? Math.round((correctChars / 5 / totalTime) * 60) : 0;
+  
     return {
-      cpm: cpm < 0 || !cpm || cpm === Infinity ? 0 : cpm,
-      wpm: wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm,
+      cpm: cpm < 0 || isNaN(cpm) || cpm === Infinity ? 0 : cpm,
+      wpm: wpm < 0 || isNaN(wpm) || wpm === Infinity ? 0 : wpm,
       correctChars,
-      correctWords,
       accuracy: accuracy.toFixed(2)
     };
   };
 
-  const stats = testFinished ? calculateStats() : { cpm: CPM, wpm: WPM, correctChars: 0, correctWords: 0, accuracy: 0 };
+  const stats = testFinished ? calculateStats() : { cpm: CPM, wpm: WPM, correctChars: 0, accuracy: 0 };
 
   return (
     <div className='container' onClick={handleContainerClick}>
@@ -151,33 +144,49 @@ const TypingTest = () => {
       </div>
       <div className='test'>
         <input type="text" className='input-field' ref={inputRef} onChange={handleChange} />
-        {
-          paragraph.split("").map((char, index) => (
-            <Character
-              char={char}
-              isActive={index === charIndex}
-              status={correctWrong[index]}
-              ref={(e) => charRefs.current[index] = e}
-              key={index}
-            />
-          ))
-        }
+        {paragraph.split("").map((char, index) => (
+          <Character
+            char={char}
+            isActive={index === charIndex}
+            status={correctWrong[index]}
+            ref={(e) => charRefs.current[index] = e}
+            key={index}
+          />
+        ))}
       </div>
-      <div className='result'>
-        <p>Time Left: <strong>{timeLeft}</strong></p>
-        <p>Mistakes: <strong>{mistakes}</strong></p>
-        <p>Correct Characters: <strong>{stats.correctChars}</strong></p>
-        <p>Correct Words: <strong>{stats.correctWords}</strong></p>
-        <p>Accuracy: <strong>{stats.accuracy}%</strong></p>
-        <p>WPM: <strong>{stats.wpm}</strong></p>
-        <p>CPM: <strong>{stats.cpm}</strong></p>
-      </div>
-      {testFinished && (
-        <TypingFinished/>
+     
+
+      <p>Time Left: <strong>{timeLeft}</strong></p>
+
+       {testFinished ? (
+        <div className='finished'>
+          <TypingFinished 
+            mistakes={mistakes}
+            correctWrong={correctWrong}
+            testDuration={testDuration}
+            timeLeft={timeLeft}
+            paragraph={paragraph}
+          />
+        </div>
+      ) : (
+        <div className='result'>
+          <p>Mistakes: <strong>{mistakes}</strong></p>
+          <p>Correct Characters: <strong>{stats.correctChars}</strong></p>
+          <p>Accuracy: <strong>{stats.accuracy}%</strong></p>
+          <p>WPM: <strong>{stats.wpm}</strong></p>
+          <p>CPM: <strong>{stats.cpm}</strong></p>
+        </div>
       )}
-      <ResetButton />
+      <ResetButton onClick={() => {
+        dispatch(resetState());
+        setTestFinished(false);
+        setTestDuration(20);
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }} />
     </div>
   );
-}
+};
 
 export default TypingTest;

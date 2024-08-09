@@ -16,19 +16,19 @@ const fromLocalStorage = () => {
     }
 }
 
-const initialState = fromLocalStorage() || { 
-  timeLeft: 20,
+const getInitialState = () => fromLocalStorage() || { 
+    timeLeft: 20,
   mistakes: 0,
   charIndex: 0,
   isTyping: false,
   WPM: 0,
   CPM: 0,
-  correctWrong: []  // Убедитесь, что начальное состояние корректно
+  correctWrong: []   
 };
 
 const typingSlice = createSlice({
   name: 'typing',
-  initialState,
+  initialState: getInitialState(),
   reducers: {
     setTimeLeft: (state, action) => {
       state.timeLeft = action.payload;
@@ -51,7 +51,9 @@ const typingSlice = createSlice({
     setCorrectWrong: (state, action) => {
       state.correctWrong = action.payload;  // Убедитесь, что передаваемый массив новый
     },
-    resetState: () => initialState
+    resetState: (state) => {
+        Object.assign(state, getInitialState());
+      }
   }
 });
 
