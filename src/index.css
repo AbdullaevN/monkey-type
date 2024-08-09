@@ -1,142 +1,148 @@
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
-
-
-*{
-    margin: 0;
-    padding: 0;
-}
-
-.App{
+/* Основные стили для приложения */
+.App {
     box-sizing: border-box;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
- 
     background-color: rgb(24, 28, 24);
- 
     font-family: "Comfortaa", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+    font-weight: 400;
+    font-style: normal;
 }
 
-.container{
+/* Контейнер для теста на печать */
+.container {
     max-width: 90%;
     margin: 5px;
-    height: 89vh;
-    width: calc(91% - 2px);
-    padding: 93px;
+    height: 90vh;
+    width: calc(100% - 20px);
+    padding: 30px;
     border-radius: 10px;
     box-sizing: border-box;
-    background: none;
+    background: rgb(30, 30, 30);
     color: rgb(149, 120, 211);
-    font-size: 15px;
+    font-size: 16px;
 }
 
-.test{
+/* Контейнер для управления временем теста */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Кнопки выбора времени */
+button.btn {
+    padding: 10px 20px;
+    outline: none;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #626262;
+    color: #fff;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+button.btn:hover {
+    background-color: #9a2288;
+}
+
+/* Текст теста на печать */
+.test {
     user-select: none;
-    font-size: 52px
+    font-size: 32px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
-input.input-field{
+/* Поле ввода, которое скрыто */
+.input-field {
     opacity: 0.01;
-    z-index: -999;
-    left: -9999px;
     position: absolute;
-
+    left: -9999px;
 }
 
-span{
-    font-size: 20px;
+/* Стили для символов текста */
+span {
+    font-size: 24px;
     user-select: none;
     cursor: text;
 }
 
-span.active{
-    border-bottom: 3px solid rgb(255, 255, 255)   ;
+span.active {
+    border-bottom: 3px solid rgb(255, 255, 255);
 }
-span.correct{
-   /* background-color: green; */
-   color: #00ff00;
+
+span.correct {
+    color: #00ff00;
 }
-span.wrong{
-   color: rgb(255, 10, 10);
-   /* background-color: pink; */
+
+span.wrong {
+    color: rgb(255, 10, 10);
 }
-span.no-space{
+
+span.no-space {
     background-color: red;
 }
 
-
-
-.result{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 15px;
-    padding-top: 10px;
-    border-top:  2px solid rgb(106, 106, 104);
+/* Блок с результатами */
+.result, .summary {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: rgb(50, 50, 50);
+    border-radius: 10px;
+    border-top: 2px solid rgb(106, 106, 104);
+    color: rgb(149, 120, 211);
+    text-align: center;
 }
 
-button.btn{
-    padding: 17px;
-    outline: none;
-    border: 1px solid #ced4da;
-    border-radius: 31px 9px;
-    cursor: pointer;
-    background: #626262;
-    color: #fff;
-    font-size: 15px;
-    transition: all 0.5s;
+.result p, .summary p {
+    margin: 5px 0;
+    font-size: 18px;
 }
 
-button.btn:hover{
-    background-color: #9a2288;
-}
-
-
-/* Responsive styles */
+/* Адаптивные стили */
 @media (max-width: 768px) {
-    .test {
-        flex-direction: column;
-        align-items: center;
+    .container {
+        padding: 20px;
     }
 
-    span {
-        font-size: 1.2rem;
+    .test {
+        font-size: 28px;
     }
 
     button.btn {
-        padding: 10px 15px;
-        font-size: 0.9rem;
+        padding: 8px 16px;
+        font-size: 14px;
     }
 
-    .result p {
-        font-size: 0.9rem;
+    .result p,
+    .summary p {
+        font-size: 16px;
     }
 }
 
 @media (max-width: 480px) {
-    .container{
-        padding: 20px;
-        height: 100%;
-    }
-    .test {
-        flex-direction: column;
-        align-items: center;
+    .container {
+        padding: 10px;
     }
 
-    span {
-        font-size: 1rem;
+    .test {
+        font-size: 20px;
     }
 
     button.btn {
-        padding: 8px 12px;
-        font-size: 0.8rem;
+        padding: 6px 12px;
+        font-size: 12px;
     }
 
-    .result p {
-        font-size: 0.8rem;
+    .result p,
+    .summary p {
+        font-size: 14px;
     }
 }

@@ -1,4 +1,3 @@
- 
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
@@ -13,6 +12,7 @@ import {
 } from '../features/typingSlice.js';
 import Character from './Character';
 import ResetButton from './ResetButton.jsx';
+import TypingFinished from './TypingFinished.jsx';
 
 const paragraph = `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quas magnam, odit velit quos temporibus error nostrum vel ab? Officiis facere vel error incidunt? Laudantium mollitia dignissimos maiores delectus fuga quis?`;
 
@@ -116,18 +116,16 @@ const TypingTest = () => {
     }
   };
 
-  // Функция для подсчета статистики
   const calculateStats = () => {
     const correctChars = correctWrong.filter(status => status === 'correct').length;
     const totalChars = paragraph.length;
-    const typedText = correctWrong.join('').trim(); // Получаем текст, который был введён
+    const typedText = correctWrong.join('').trim();
     const words = paragraph.split(' ');
     const typedWords = typedText.split(' ');
 
     const correctWords = typedWords.filter((word, index) => word === words[index]).length;
 
     const accuracy = (correctChars / totalChars) * 100;
-
     const totalTime = testDuration - timeLeft;
 
     const cpm = correctChars * (60 / totalTime);
@@ -138,7 +136,7 @@ const TypingTest = () => {
       wpm: wpm < 0 || !wpm || wpm === Infinity ? 0 : wpm,
       correctChars,
       correctWords,
-      accuracy: accuracy.toFixed(2) // округляем до двух знаков после запятой
+      accuracy: accuracy.toFixed(2)
     };
   };
 
@@ -147,9 +145,9 @@ const TypingTest = () => {
   return (
     <div className='container' onClick={handleContainerClick}>
       <div className='controls'>
-        <button className='btn' onClick={() => handleDurationClick(20)}>20 </button>
-        <button className='btn' onClick={() => handleDurationClick(60)}>60 </button>
-        <button className='btn' onClick={() => handleDurationClick(120)}>120</button>
+        <button className='btn' onClick={() => handleDurationClick(20)}>20s</button>
+        <button className='btn' onClick={() => handleDurationClick(60)}>60s</button>
+        <button className='btn' onClick={() => handleDurationClick(120)}>120s</button>
       </div>
       <div className='test'>
         <input type="text" className='input-field' ref={inputRef} onChange={handleChange} />
@@ -173,23 +171,11 @@ const TypingTest = () => {
         <p>Accuracy: <strong>{stats.accuracy}%</strong></p>
         <p>WPM: <strong>{stats.wpm}</strong></p>
         <p>CPM: <strong>{stats.cpm}</strong></p>
-      
       </div>
-
       {testFinished && (
-          <div>
-            <p><strong>Test Finished!</strong></p>
-            <p>Errors: {mistakes}</p>
-            <p>Correct Characters: {stats.correctChars}</p>
-            <p>Correct Words: {stats.correctWords}</p>
-            <p>Accuracy: {stats.accuracy}%</p>
-            <p>Words Per Minute: {stats.wpm}</p>
-            <p>Characters Per Minute: {stats.cpm}</p>
-          </div>
-        )}
-      {/* <button className='btn' onClick={ResetButton}>Сбросить</button> */}
-      <ResetButton/>
-
+        <TypingFinished/>
+      )}
+      <ResetButton />
     </div>
   );
 }
